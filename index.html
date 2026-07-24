@@ -87,6 +87,17 @@
     background: var(--orange);
   }
 
+  /* ===== SCROLL PROGRESS ===== */
+  .scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--orange), var(--green), var(--blue));
+    z-index: 200;
+    transition: width 0.1s ease-out;
+  }
+
   /* ===== NAV ===== */
   header {
     position: fixed;
@@ -169,20 +180,26 @@
     position: relative;
     padding: 150px 0 100px;
     overflow: hidden;
+    background-image:
+      linear-gradient(180deg, rgba(11,26,17,0.7) 0%, rgba(11,26,17,0.74) 55%, rgba(11,26,17,0.9) 100%),
+      url('assets/fondo-hero.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
   }
 
   .hero-blob {
     position: absolute;
     top: -200px; right: -200px;
     width: 700px; height: 700px;
-    background: radial-gradient(circle, rgba(60,154,92,0.18), transparent 70%);
+    background: radial-gradient(circle, rgba(139,209,124,0.16), transparent 70%);
     border-radius: 50%;
     z-index: 0;
     pointer-events: none;
   }
   .hero-blob.two {
     top: auto; bottom: -300px; left: -250px; right: auto;
-    background: radial-gradient(circle, rgba(240,135,30,0.14), transparent 70%);
+    background: radial-gradient(circle, rgba(240,135,30,0.12), transparent 70%);
   }
 
   .hero-inner {
@@ -353,13 +370,19 @@
     font-weight: 800;
     max-width: 780px;
     line-height: 1.15;
+    color: white;
   }
-  .hero-title span { color: var(--green-deep); }
+  .hero-title span {
+    background: linear-gradient(90deg, #A8E6A1, #F0871E);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 
   .hero-sub {
     margin-top: 18px;
     font-size: 1.08rem;
-    color: var(--ink-soft);
+    color: rgba(255,255,255,0.82);
     max-width: 620px;
   }
 
@@ -392,10 +415,15 @@
 
   /* ===== SOBRE NOSOTROS ===== */
   .about {
-    background: var(--card);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    background-image:
+      linear-gradient(180deg, rgba(8,20,13,0.9) 0%, rgba(8,20,13,0.97) 12%, rgba(8,20,13,0.97) 90%, var(--bg) 100%),
+      url('assets/fondo-nosotros.png');
+    background-size: cover;
+    background-position: center 100%;
+    background-repeat: no-repeat;
   }
+  .about .section-head h2 { color: white; }
+  .about .section-head p { color: rgba(255,255,255,0.85); }
 
   .about-grid {
     display: grid;
@@ -404,22 +432,28 @@
   }
 
   .about-card {
-    background: var(--bg);
-    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.5);
     border-radius: var(--radius);
     padding: 32px 28px;
+    box-shadow: 0 24px 44px -24px rgba(0,0,0,0.45);
     transition: transform 0.35s ease, box-shadow 0.35s ease;
   }
   .about-card:hover {
     transform: translateY(-8px);
-    box-shadow: var(--shadow);
+    box-shadow: 0 30px 54px -22px rgba(0,0,0,0.5);
   }
   .about-card .icon {
     width: 52px; height: 52px;
     border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem;
     margin-bottom: 18px;
+  }
+  .about-card .icon svg {
+    width: 30px; height: 30px;
+    filter: drop-shadow(0 3px 5px rgba(20,40,25,0.2));
   }
   .about-card:nth-child(1) .icon { background: #FDEEDD; }
   .about-card:nth-child(2) .icon { background: #E7F3EA; }
@@ -532,6 +566,44 @@
   }
 
   /* ===== SERVICIOS ===== */
+  .servicios-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .tab-btn {
+    padding: 11px 22px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 0.86rem;
+    font-family: var(--ff-body);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .tab-btn:hover { border-color: var(--green); color: var(--ink); }
+  .tab-btn.active {
+    background: var(--green-deep);
+    color: white;
+    border-color: var(--green-deep);
+    box-shadow: 0 10px 20px -10px rgba(30,86,49,0.6);
+  }
+  .servicios-panel {
+    display: none;
+  }
+  .servicios-panel.active {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    animation: fadeInPanel 0.45s ease;
+  }
+  @keyframes fadeInPanel {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   .servicios-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -640,6 +712,48 @@
   .contact-card .btn-primary { background: var(--orange); width: 100%; }
   .contact-card .btn-outline { border-color: rgba(255,255,255,0.3); color: white; width: 100%; margin-top: 10px; }
 
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .contact-form label {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 7px;
+  }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.07);
+    color: white;
+    font-family: var(--ff-body);
+    font-size: 0.92rem;
+    resize: vertical;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .contact-form textarea { min-height: 96px; }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: rgba(255,255,255,0.4); }
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: none;
+    border-color: var(--orange);
+    background: rgba(255,255,255,0.12);
+  }
+  .contact-form button {
+    border: none;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+
   footer {
     background: #0F2216;
     color: rgba(255,255,255,0.55);
@@ -736,7 +850,7 @@
     .about-grid { grid-template-columns: 1fr; }
     .sectores-grid { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .servicios-grid { grid-template-columns: repeat(2, 1fr); }
+    .servicios-grid, .servicios-panel.active { grid-template-columns: repeat(2, 1fr); }
     .contact-grid { grid-template-columns: 1fr; }
     .ig-card { padding: 30px 22px; }
     .ig-mini-grid { grid-template-columns: repeat(3, 1fr); }
@@ -744,12 +858,14 @@
   @media (max-width: 560px) {
     section { padding: 70px 0; }
     .hero { padding: 130px 0 70px; }
-    .servicios-grid { grid-template-columns: 1fr; }
+    .servicios-grid, .servicios-panel.active { grid-template-columns: 1fr; }
     .ig-actions .btn { flex: 1 1 auto; }
   }
 </style>
 </head>
 <body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <header id="header">
   <nav class="container">
@@ -912,15 +1028,40 @@
     </div>
     <div class="about-grid">
       <div class="about-card reveal">
-        <div class="icon">🎓</div>
+        <div class="icon">
+          <svg viewBox="0 0 64 64">
+            <defs><linearGradient id="gCap" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A6BB0"/><stop offset="1" stop-color="#4A3F73"/></linearGradient></defs>
+            <path d="M32 14 L58 26 L32 38 L6 26 Z" fill="url(#gCap)"/>
+            <path d="M18 30.5 V40 C18 45 24 49 32 49 C40 49 46 45 46 40 V30.5 L32 36.5 Z" fill="#3E3564"/>
+            <line x1="52" y1="27.5" x2="52" y2="44" stroke="#F0871E" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="52" cy="46" r="3" fill="#F0871E"/>
+          </svg>
+        </div>
         <p>Somos una empresa gestora de servicios ambientales con un alto grado de experiencia profesional, realizado con consultores acreditados en el área de Regularización Ambiental, Mecanismos de Control y Procesos Administrativos generados por las diferentes Autoridades Ambientales como Ministerio del Ambiente, Agua y Transición Ecológica, Prefecturas y Municipios.</p>
       </div>
       <div class="about-card reveal">
-        <div class="icon">⚖️</div>
+        <div class="icon">
+          <svg viewBox="0 0 64 64">
+            <defs><linearGradient id="gScale" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0A64E"/><stop offset="1" stop-color="#D9781E"/></linearGradient></defs>
+            <rect x="30" y="10" width="4" height="38" rx="2" fill="url(#gScale)"/>
+            <rect x="14" y="16" width="36" height="3" rx="1.5" fill="url(#gScale)"/>
+            <circle cx="32" cy="12" r="4" fill="url(#gScale)"/>
+            <path d="M14 19 L8 34 C8 38 12 40 16 40 C20 40 24 38 24 34 Z" fill="none" stroke="url(#gScale)" stroke-width="2.5"/>
+            <path d="M50 19 L44 34 C44 38 48 40 52 40 C56 40 60 38 60 34 Z" fill="none" stroke="url(#gScale)" stroke-width="2.5"/>
+            <rect x="22" y="48" width="20" height="4" rx="2" fill="url(#gScale)"/>
+          </svg>
+        </div>
         <p>Nuestro interés es asesorar técnica y legalmente a los operadores de las diferentes actividades productivas para la ejecución de las obligaciones ambientales conforme a la Normativa Ambiental vigente.</p>
       </div>
       <div class="about-card reveal">
-        <div class="icon">🇪🇨</div>
+        <div class="icon">
+          <svg viewBox="0 0 64 64">
+            <rect x="14" y="10" width="4" height="46" rx="2" fill="#8A8F97"/>
+            <rect x="18" y="12" width="30" height="10" fill="#FFD54A"/>
+            <rect x="18" y="22" width="30" height="5" fill="#1D77C9"/>
+            <rect x="18" y="27" width="30" height="5" fill="#E0362E"/>
+          </svg>
+        </div>
         <p>Siempre estamos presentes para ayudar al operador a solucionar los problemas ambientales en los sectores estratégicos y no estratégicos, a nivel nacional.</p>
       </div>
     </div>
@@ -1003,24 +1144,44 @@
       <h2>Todo lo que necesitas para tu regularización ambiental</h2>
       <p>Cotización personalizada según tu sector y tipo de operación.</p>
     </div>
-    <div class="servicios-grid">
-      <div class="servicio-card reveal"><span class="servicio-num">01</span><span class="txt">Certificado Ambiental</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">02</span><span class="txt">Diagnóstico Ambiental</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">03</span><span class="txt">Registro Ambiental</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">04</span><span class="txt">Estudios de Impacto Ambiental Ex antes y Ex post</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">05</span><span class="txt">Licencia Ambiental</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">06</span><span class="txt">Aprobación de Puntos de Monitoreo</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">07</span><span class="txt">Informes de Reportes de Monitoreo</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">08</span><span class="txt">Informe Ambiental de Cumplimiento (IAC)</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">09</span><span class="txt">Auditoría Ambiental de Cumplimiento (AAC)</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">10</span><span class="txt">Actualización de Plan de Manejo Ambiental</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">11</span><span class="txt">Auditoría Ambiental de Conjunción</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">12</span><span class="txt">Registro Generador de Desechos Peligrosos y/o Especiales</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">13</span><span class="txt">Declaraciones Anuales Desechos Peligrosos y/o Especiales</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">14</span><span class="txt">Plan de Minimización Desechos Peligrosos y/o Especiales</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">15</span><span class="txt">Informe de Resultados al Plan de Minimización de Desechos</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">16</span><span class="txt">Plan Emergente</span></div>
-      <div class="servicio-card reveal"><span class="servicio-num">17</span><span class="txt">Plan de Acción</span></div>
+    <div class="servicios-tabs reveal">
+      <button class="tab-btn active" data-tab="diagnostico">Diagnóstico y Certificación</button>
+      <button class="tab-btn" data-tab="licenciamiento">Estudios y Licenciamiento</button>
+      <button class="tab-btn" data-tab="monitoreo">Monitoreo y Cumplimiento</button>
+      <button class="tab-btn" data-tab="desechos">Gestión de Desechos</button>
+      <button class="tab-btn" data-tab="contingencia">Planes de Contingencia</button>
+    </div>
+
+    <div class="servicios-panel active" data-panel="diagnostico">
+      <div class="servicio-card"><span class="servicio-num">01</span><span class="txt">Certificado Ambiental</span></div>
+      <div class="servicio-card"><span class="servicio-num">02</span><span class="txt">Diagnóstico Ambiental</span></div>
+      <div class="servicio-card"><span class="servicio-num">03</span><span class="txt">Registro Ambiental</span></div>
+    </div>
+
+    <div class="servicios-panel" data-panel="licenciamiento">
+      <div class="servicio-card"><span class="servicio-num">04</span><span class="txt">Estudios de Impacto Ambiental Ex antes y Ex post</span></div>
+      <div class="servicio-card"><span class="servicio-num">05</span><span class="txt">Licencia Ambiental</span></div>
+    </div>
+
+    <div class="servicios-panel" data-panel="monitoreo">
+      <div class="servicio-card"><span class="servicio-num">06</span><span class="txt">Aprobación de Puntos de Monitoreo</span></div>
+      <div class="servicio-card"><span class="servicio-num">07</span><span class="txt">Informes de Reportes de Monitoreo</span></div>
+      <div class="servicio-card"><span class="servicio-num">08</span><span class="txt">Informe Ambiental de Cumplimiento (IAC)</span></div>
+      <div class="servicio-card"><span class="servicio-num">09</span><span class="txt">Auditoría Ambiental de Cumplimiento (AAC)</span></div>
+      <div class="servicio-card"><span class="servicio-num">10</span><span class="txt">Actualización de Plan de Manejo Ambiental</span></div>
+      <div class="servicio-card"><span class="servicio-num">11</span><span class="txt">Auditoría Ambiental de Conjunción</span></div>
+    </div>
+
+    <div class="servicios-panel" data-panel="desechos">
+      <div class="servicio-card"><span class="servicio-num">12</span><span class="txt">Registro Generador de Desechos Peligrosos y/o Especiales</span></div>
+      <div class="servicio-card"><span class="servicio-num">13</span><span class="txt">Declaraciones Anuales Desechos Peligrosos y/o Especiales</span></div>
+      <div class="servicio-card"><span class="servicio-num">14</span><span class="txt">Plan de Minimización Desechos Peligrosos y/o Especiales</span></div>
+      <div class="servicio-card"><span class="servicio-num">15</span><span class="txt">Informe de Resultados al Plan de Minimización de Desechos</span></div>
+    </div>
+
+    <div class="servicios-panel" data-panel="contingencia">
+      <div class="servicio-card"><span class="servicio-num">16</span><span class="txt">Plan Emergente</span></div>
+      <div class="servicio-card"><span class="servicio-num">17</span><span class="txt">Plan de Acción</span></div>
     </div>
   </div>
 </section>
@@ -1110,8 +1271,23 @@
       <div class="contact-card reveal">
         <h3>¿Listo para regularizar tu operación?</h3>
         <p>Contáctanos por el canal que prefieras y con gusto te asesoramos sobre Regularización Ambiental, Mecanismos de Control y Procesos Administrativos.</p>
-        <a href="https://wa.me/593982425506?text=Hola%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20servicios%20ambientales" target="_blank" rel="noopener" class="btn btn-primary" style="display:block; text-align:center;">Escribir por WhatsApp</a>
-        <a href="mailto:insoamil@gmail.com" class="btn btn-outline" style="display:block; text-align:center;">Escribir por Email</a>
+        <a href="https://wa.me/593982425506?text=Hola%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20servicios%20ambientales" target="_blank" rel="noopener" class="btn btn-primary" style="display:block; text-align:center; margin-bottom:22px;">Escribir por WhatsApp</a>
+
+        <form class="contact-form" id="contactForm">
+          <div>
+            <label for="cf-name">Nombre</label>
+            <input type="text" id="cf-name" placeholder="Tu nombre" required>
+          </div>
+          <div>
+            <label for="cf-email">Tu email</label>
+            <input type="email" id="cf-email" placeholder="tucorreo@ejemplo.com" required>
+          </div>
+          <div>
+            <label for="cf-message">Mensaje</label>
+            <textarea id="cf-message" placeholder="Cuéntanos qué necesitas..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-outline" style="width:100%;">Enviar por Email</button>
+        </form>
       </div>
     </div>
   </div>
@@ -1258,6 +1434,14 @@
     header.classList.toggle('scrolled', window.scrollY > 40);
   });
 
+  // Scroll progress bar
+  const scrollProgress = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+    scrollProgress.style.width = pct + '%';
+  });
+
   // Reveal + stagger
   const revealEls = document.querySelectorAll('.reveal');
   const revealObserver = new IntersectionObserver((entries) => {
@@ -1302,6 +1486,33 @@
     const y = window.scrollY;
     blobs[0].style.transform = `translateY(${y * 0.25}px)`;
     blobs[1].style.transform = `translateY(${y * -0.15}px)`;
+  });
+
+  // Formulario de contacto -> envía por email a insoamil@gmail.com
+  const contactForm = document.getElementById('contactForm');
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+
+    const subject = 'Consulta desde la web - ' + name;
+    const body = 'Nombre: ' + name + '\nEmail de contacto: ' + email + '\n\nMensaje:\n' + message;
+    const mailtoUrl = 'mailto:insoamil@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+    window.location.href = mailtoUrl;
+  });
+
+  // Servicios tabs
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.servicios-panel');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector('.servicios-panel[data-panel="' + btn.dataset.tab + '"]').classList.add('active');
+    });
   });
 
   // Legal modals
