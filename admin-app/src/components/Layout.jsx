@@ -4,65 +4,78 @@ import { db } from '../firebase';
 import { useAuth } from '../auth/AuthContext';
 import { useRouter } from '../router';
 import { ROLE_LABELS } from '../lib/roles';
+import logo from '../assets/logo.png';
+import {
+  IconDashboard,
+  IconMessages,
+  IconFaq,
+  IconProcess,
+  IconBuilding,
+  IconServices,
+  IconWhatsapp,
+  IconUsers,
+  IconSettings,
+  IconActivity,
+} from './icons';
 import './layout.css';
 
 // Sidebar items are added one phase at a time — never show a link to a
 // module that doesn't actually work yet.
 const NAV_ITEMS = [
-  { key: '', label: 'Dashboard', icon: '📊' },
+  { key: '', label: 'Dashboard', icon: <IconDashboard /> },
   {
     key: 'mensajes',
     label: 'Mensajes',
-    icon: '✉️',
+    icon: <IconMessages />,
     badge: 'newMessages',
     roles: ['superadmin', 'admin', 'comercial'],
   },
   {
     key: 'faqs',
     label: 'Preguntas frecuentes',
-    icon: '❓',
+    icon: <IconFaq />,
     roles: ['superadmin', 'admin', 'editor'],
   },
   {
     key: 'como-trabajamos',
     label: 'Cómo trabajamos',
-    icon: '🛠️',
+    icon: <IconProcess />,
     roles: ['superadmin', 'admin', 'editor'],
   },
   {
     key: 'operadores',
     label: 'Operadores estratégicos',
-    icon: '🏗️',
+    icon: <IconBuilding />,
     roles: ['superadmin', 'admin', 'editor'],
   },
   {
     key: 'servicios',
     label: 'Servicios especializados',
-    icon: '🧾',
+    icon: <IconServices />,
     roles: ['superadmin', 'admin', 'editor'],
   },
   {
     key: 'whatsapp',
     label: 'Contacto y WhatsApp',
-    icon: '📱',
+    icon: <IconWhatsapp />,
     roles: ['superadmin', 'admin'],
   },
   {
     key: 'usuarios',
     label: 'Usuarios y permisos',
-    icon: '👥',
+    icon: <IconUsers />,
     roles: ['superadmin'],
   },
   {
     key: 'configuracion',
     label: 'Configuración general',
-    icon: '⚙️',
+    icon: <IconSettings />,
     roles: ['superadmin', 'admin'],
   },
   {
     key: 'actividad',
     label: 'Registro de actividad',
-    icon: '📜',
+    icon: <IconActivity />,
     roles: ['superadmin', 'admin'],
   },
 ];
@@ -90,7 +103,10 @@ export default function Layout({ children }) {
   return (
     <div className="panel-shell">
       <aside className={`panel-sidebar ${menuOpen ? 'open' : ''}`}>
-        <div className="panel-brand">INSOAMIL</div>
+        <div className="panel-brand">
+          <img src={logo} alt="INSOAMIL" className="panel-brand-logo" />
+          INSOAMIL
+        </div>
         <nav>
           {visibleItems.map((item) => {
             const badgeCount = item.badge ? badgeValues[item.badge] : 0;

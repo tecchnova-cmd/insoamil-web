@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
+import AuthBrand from '../components/AuthBrand';
 import './auth.css';
 
 export default function Login() {
@@ -33,7 +34,7 @@ export default function Login() {
   return (
     <div className="auth-screen">
       <form className="auth-card" onSubmit={handleSubmit}>
-        <div className="auth-logo">INSOAMIL</div>
+        <AuthBrand />
         <h1>{mode === 'login' ? 'Acceso administrativo' : 'Recuperar contraseña'}</h1>
         <p className="auth-sub">
           {mode === 'login'

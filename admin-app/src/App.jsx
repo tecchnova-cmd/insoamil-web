@@ -3,6 +3,7 @@ import { RouterProvider, useRouter } from './router';
 import Login from './auth/Login';
 import ChangePassword from './auth/ChangePassword';
 import Layout from './components/Layout';
+import AuthBrand from './components/AuthBrand';
 import Dashboard from './modules/Dashboard';
 import Mensajes from './modules/Mensajes';
 import FAQs from './modules/FAQs';
@@ -44,7 +45,7 @@ function Gate() {
     return (
       <Screen>
         <div className="auth-card">
-          <div className="auth-logo">INSOAMIL</div>
+          <AuthBrand />
           <h1>Acceso pendiente</h1>
           <p className="auth-sub">{profileError}</p>
         </div>
@@ -56,7 +57,7 @@ function Gate() {
     return (
       <Screen>
         <div className="auth-card">
-          <div className="auth-logo">INSOAMIL</div>
+          <AuthBrand />
           <h1>Cuenta desactivada</h1>
           <p className="auth-sub">
             Tu acceso al panel fue desactivado. Contacta al superadministrador si crees que es un error.

@@ -37,11 +37,25 @@ body {
 }
 
 .panel-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
   font-size: 1.2rem;
-  padding: 0 24px 24px;
+  padding: 0 24px 26px;
   letter-spacing: 0.03em;
+}
+
+.panel-brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: white;
+  border: 2.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
 }
 
 .panel-sidebar nav {
@@ -78,7 +92,15 @@ body {
 }
 
 .nav-icon {
-  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-icon svg {
+  width: 19px;
+  height: 19px;
 }
 
 .nav-badge {
