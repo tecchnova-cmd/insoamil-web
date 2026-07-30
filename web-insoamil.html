@@ -751,6 +751,18 @@
     background: white;
     margin-top: 8px;
   }
+  .sector-card .sector-cta {
+    display: inline-block;
+    margin-top: 22px;
+    background: rgba(255,255,255,0.18);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.25s ease;
+  }
+  .sector-card .sector-cta:hover { background: rgba(255,255,255,0.28); }
 
   /* ===== STATS STRIP ===== */
   .stats {
@@ -1324,39 +1336,13 @@
 
 <section id="sectores">
   <div class="container">
-    <div class="section-head reveal">
+    <div class="section-head reveal" id="opSectionHead">
       <span class="eyebrow">Sectores de atención</span>
-      <h2>Trabajamos con operadores estratégicos y no estratégicos</h2>
-      <p>Cobertura para actividades productivas de distinta índole en todo el territorio nacional.</p>
+      <h2>Cargando...</h2>
+      <div></div>
     </div>
-    <div class="sectores-grid">
-      <div class="sector-card no-estrategico reveal">
-        <span class="tag">Sector No Estratégico</span>
-        <h3>Actividades productivas convencionales</h3>
-        <ul>
-          <li>Agrícola (bananeras, palmicultoras)</li>
-          <li>Pecuario (granjas)</li>
-          <li>Minería (áridos y pétreos)</li>
-          <li>Hidrocarburos (estaciones de servicio)</li>
-          <li>Industrial</li>
-          <li>Clínicas del sector privado</li>
-          <li>Saneamiento financiado por los municipios</li>
-          <li>Lavadoras - lubricadoras</li>
-          <li>Telecomunicaciones (estaciones bases celulares) y otros</li>
-        </ul>
-      </div>
-      <div class="sector-card estrategico reveal">
-        <span class="tag">Sector Estratégico</span>
-        <h3>Actividades de alto impacto nacional</h3>
-        <ul>
-          <li>Centros de salud y hospitales del sector público</li>
-          <li>Gestión de desechos peligrosos y no peligrosos</li>
-          <li>Hidrocarburos (plantas de asfalto y autotanques)</li>
-          <li>Saneamiento financiado por Banco del Estado</li>
-          <li>Minería metálica y libre aprovechamiento</li>
-          <li>Actividades que intersecten en bosques protectores, áreas protegidas y otros</li>
-        </ul>
-      </div>
+    <div class="sectores-grid" id="opGrid">
+      <p class="muted-note">Cargando sectores...</p>
     </div>
   </div>
 </section>
@@ -2055,6 +2041,90 @@
       ctTimeline.innerHTML = '<p class="muted-note">No se pudo cargar el proceso.</p>';
     }
   );
+
+  // ---- Sectores / Operadores estratégicos (leído en vivo desde Firestore) ----
+  // Mismo conversor markdown-lite -> HTML seguro que usa el panel de administración:
+  // se escapa todo primero y solo se insertan negrita/cursiva/viñetas/enlaces http(s).
+  function mdInline(escaped) {
+    let out = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return out;
+  }
+  function markdownLiteToHtml(raw) {
+    if (!raw) return '';
+    const lines = raw.split(/\r?\n/);
+    let html = '', listBuffer = [], paraBuffer = [];
+    function flushList() {
+      if (listBuffer.length) {
+        html += '<ul>' + listBuffer.map((l) => '<li>' + mdInline(escapeHtml(l)) + '</li>').join('') + '</ul>';
+        listBuffer = [];
+      }
+    }
+    function flushPara() {
+      if (paraBuffer.length) {
+        html += '<p>' + paraBuffer.map((l) => mdInline(escapeHtml(l))).join('<br>') + '</p>';
+        paraBuffer = [];
+      }
+    }
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('- ')) { flushPara(); listBuffer.push(trimmed.slice(2)); }
+      else if (trimmed === '') { flushList(); flushPara(); }
+      else { flushList(); paraBuffer.push(trimmed); }
+    }
+    flushList(); flushPara();
+    return html;
+  }
+
+  const opSection = document.getElementById('sectores');
+  const opSectionHead = document.getElementById('opSectionHead');
+  const opGrid = document.getElementById('opGrid');
+
+  function ctaHref(block) {
+    if (block.ctaType === 'whatsapp') {
+      return 'https://wa.me/593982425506?text=' + encodeURIComponent(block.ctaMessage || 'Hola, deseo más información sobre sus servicios ambientales');
+    }
+    return '#contacto';
+  }
+
+  onSnapshot(doc(db, 'operatorsContent', 'main'), (snap) => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+
+    if (data.sectionVisible === false) {
+      opSection.style.display = 'none';
+      return;
+    }
+    opSection.style.display = '';
+
+    opSectionHead.querySelector('h2').textContent = data.title || '';
+    opSectionHead.querySelector('div').innerHTML = markdownLiteToHtml(data.intro);
+
+    const blocks = [
+      { key: 'noEstrategico', tag: 'Sector No Estratégico', cls: 'no-estrategico', data: data.noEstrategico },
+      { key: 'estrategico', tag: 'Sector Estratégico', cls: 'estrategico', data: data.estrategico },
+    ]
+      .filter((b) => b.data && b.data.visible !== false)
+      .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+
+    if (blocks.length === 0) {
+      opGrid.innerHTML = '<p class="muted-note">Sin sectores publicados.</p>';
+      return;
+    }
+
+    opGrid.innerHTML = blocks
+      .map(
+        (b) => `
+        <div class="sector-card ${b.cls} reveal visible">
+          <span class="tag">${b.tag}</span>
+          <h3>${escapeHtml(b.data.icon || '')} ${escapeHtml(b.data.titulo || '')}</h3>
+          <div class="op-desc">${markdownLiteToHtml(b.data.descripcionMd)}</div>
+          ${b.data.ctaText ? `<a class="sector-cta" href="${ctaHref(b.data)}" ${b.data.ctaType === 'whatsapp' ? 'target="_blank" rel="noopener"' : ''}>${escapeHtml(b.data.ctaText)}</a>` : ''}
+        </div>`
+      )
+      .join('');
+  });
 </script>
 
 </body>

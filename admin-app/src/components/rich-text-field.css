@@ -1,0 +1,79 @@
+.rtf-wrap {
+  margin-bottom: 4px;
+}
+
+.rtf-wrap > label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-ink-soft);
+  margin-bottom: 6px;
+}
+
+.rtf-toolbar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rtf-toolbar button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--p-line);
+  background: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.rtf-toolbar button:hover {
+  background: var(--p-green-light);
+}
+
+.rtf-preview-toggle {
+  width: auto !important;
+  padding: 0 12px;
+  font-size: 0.78rem !important;
+  font-weight: 600;
+}
+
+.rtf-wrap textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--p-line);
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.rtf-hint {
+  font-size: 0.74rem;
+  color: var(--p-ink-soft);
+  margin: 4px 0 0;
+}
+
+.rtf-preview {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: var(--p-bg);
+  border-radius: 10px;
+  border: 1px solid var(--p-line);
+  font-size: 0.88rem;
+}
+
+.rtf-preview ul {
+  padding-left: 18px;
+  margin: 6px 0;
+}
+
+.rtf-preview p {
+  margin: 0 0 8px;
+}
+
+.rtf-preview a {
+  color: var(--p-green-deep);
+}

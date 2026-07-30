@@ -28,6 +28,12 @@ const NAV_ITEMS = [
     icon: '🛠️',
     roles: ['superadmin', 'admin', 'editor'],
   },
+  {
+    key: 'operadores',
+    label: 'Operadores estratégicos',
+    icon: '🏗️',
+    roles: ['superadmin', 'admin', 'editor'],
+  },
 ];
 
 const ROLE_LABELS = {
