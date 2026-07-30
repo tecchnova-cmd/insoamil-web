@@ -1,0 +1,106 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function myRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function myActive() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.active == true;
+    }
+
+    function hasRole(roles) {
+      return isSignedIn() && myActive() && myRole() in roles;
+    }
+
+    // Roles allowed to manage general content (FAQs, proceso, operadores, servicios, settings)
+    function canEditContent() {
+      return hasRole(['superadmin', 'admin', 'editor']);
+    }
+
+    // Roles allowed to manage messages / commercial inbox
+    function canManageMessages() {
+      return hasRole(['superadmin', 'admin', 'comercial']);
+    }
+
+    // Roles allowed to read everything (includes readonly)
+    function canRead() {
+      return hasRole(['superadmin', 'admin', 'editor', 'comercial', 'readonly']);
+    }
+
+    function isSuperOrAdmin() {
+      return hasRole(['superadmin', 'admin']);
+    }
+
+    // ---------- users ----------
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || canRead());
+      allow update: if isSignedIn() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role
+                    && request.resource.data.active == resource.data.active; // self: can't change own role/active
+      allow update, delete: if isSuperOrAdmin() && !(resource.data.role == 'superadmin' && myRole() != 'superadmin');
+      allow create: if isSuperOrAdmin();
+    }
+
+    // ---------- public, read-only content ----------
+    match /siteSettings/{docId} {
+      allow read: if true;
+      allow write: if canEditContent();
+    }
+
+    match /faqCategories/{docId} {
+      allow read: if resource.data.active == true || canRead();
+      allow write: if canEditContent();
+    }
+
+    match /faqs/{docId} {
+      allow read: if resource.data.active == true || canRead();
+      allow write: if canEditContent();
+    }
+
+    match /workProcess/{docId} {
+      allow read: if docId == '_section' || resource.data.active == true || canRead();
+      allow write: if canEditContent();
+    }
+
+    match /operatorsContent/{docId} {
+      allow read: if true;
+      allow write: if canEditContent();
+    }
+
+    match /services/{docId} {
+      allow read: if resource.data.active == true || canRead();
+      allow write: if canEditContent();
+    }
+
+    // ---------- messages (public can create, never read) ----------
+    match /messages/{docId} {
+      allow create: if request.resource.data.keys().hasAll(['nombre', 'mensaje', 'fecha', 'estado', 'fuente'])
+                    && request.resource.data.nombre is string && request.resource.data.nombre.size() <= 200
+                    && request.resource.data.mensaje is string && request.resource.data.mensaje.size() <= 4000
+                    && request.resource.data.estado == 'nuevo';
+      allow read, update, delete: if canManageMessages();
+
+      match /notes/{noteId} {
+        allow read, write: if canManageMessages();
+      }
+      match /history/{historyId} {
+        allow read: if canManageMessages();
+        allow write: if canManageMessages();
+      }
+    }
+
+    // ---------- activity logs ----------
+    match /activityLogs/{docId} {
+      allow read: if isSuperOrAdmin();
+      allow create: if isSignedIn(); // app writes a log entry for the acting user
+      allow update, delete: if false;
+    }
+  }
+}

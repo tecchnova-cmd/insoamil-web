@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>INSOAMIL | Ingeniería Soluciones Ambientales Integrales y Legales</title>
 <meta name="description" content="INSOAMIL - Asesoría ambiental en general: Regularización Ambiental, Mecanismos de Control, Procesos Administrativos. Quevedo, Los Ríos, Ecuador.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -249,9 +251,7 @@
     object-fit: cover;
     border: 4px solid white;
     background: white;
-    animation: unspin 6s linear infinite;
   }
-  @keyframes unspin { to { transform: rotate(-360deg); } }
 
   .ig-name-row {
     display: flex;
@@ -778,6 +778,19 @@
     transition: color 0.25s ease;
   }
   .footer-legal a:hover { color: white; }
+
+  .footer-admin {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+  .footer-admin a {
+    font-size: 0.74rem;
+    color: rgba(255,255,255,0.35);
+    transition: color 0.25s ease;
+  }
+  .footer-admin a:hover { color: rgba(255,255,255,0.7); }
   footer a { color: rgba(255,255,255,0.8); }
 
   /* ===== LEGAL MODALS ===== */
@@ -1302,6 +1315,9 @@
       <a href="#" onclick="openLegal('aviso'); return false;">Aviso Legal</a>
       <a href="#" onclick="openLegal('cookies'); return false;">Política de Cookies</a>
     </nav>
+  </div>
+  <div class="container footer-admin">
+    <a href="/admin/">Acceso administrativo</a>
   </div>
 </footer>
 

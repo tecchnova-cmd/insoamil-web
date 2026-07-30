@@ -1,0 +1,93 @@
+.page-head {
+  margin-bottom: 24px;
+}
+
+.page-head h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.page-head p {
+  color: var(--p-ink-soft);
+  margin: 0;
+}
+
+.banner {
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.banner.error {
+  background: #fdecec;
+  color: #b3261e;
+}
+
+.banner.success {
+  background: var(--p-green-light);
+  color: var(--p-green-deep);
+}
+
+.muted {
+  color: var(--p-ink-soft);
+  font-size: 0.9rem;
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.dash-card {
+  background: var(--p-card);
+  border: 1px solid var(--p-line);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.dash-card-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--p-green-deep);
+}
+
+.dash-card-label {
+  color: var(--p-ink-soft);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.dash-section {
+  background: var(--p-card);
+  border: 1px solid var(--p-line);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.dash-section h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  margin: 0 0 14px;
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-list li {
+  font-size: 0.88rem;
+  color: var(--p-ink-soft);
+  border-bottom: 1px solid var(--p-line);
+  padding-bottom: 10px;
+}

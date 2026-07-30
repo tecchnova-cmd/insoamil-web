@@ -1,12 +1,30 @@
 {
+  "firestore": {
+    "database": "(default)",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
   "hosting": {
     "site": "insoamil",
     "public": ".",
     "ignore": [
       "firebase.json",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "storage.rules",
       "**/.*",
       "**/node_modules/**",
+      "admin-app/**",
       "web-insoamil.html"
+    ],
+    "rewrites": [
+      {
+        "source": "/admin/**",
+        "destination": "/admin/index.html"
+      }
     ]
   }
 }

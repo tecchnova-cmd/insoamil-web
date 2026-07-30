@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function myRole() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function myActive() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.active == true;
+    }
+
+    function canEditContent() {
+      return isSignedIn() && myActive() && myRole() in ['superadmin', 'admin', 'editor'];
+    }
+
+    function isValidImage() {
+      return request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|jpg|png|webp)');
+    }
+
+    function isValidDoc() {
+      return request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('application/(pdf|msword|vnd.openxmlformats-officedocument.wordprocessingml.document|vnd.ms-excel|vnd.openxmlformats-officedocument.spreadsheetml.sheet)');
+    }
+
+    // Service images: public read (shown on the public site), only content editors can write
+    match /services/{serviceId}/images/{fileName} {
+      allow read: if true;
+      allow write: if canEditContent() && isValidImage();
+      allow delete: if canEditContent();
+    }
+
+    // Service downloadable files: public read (used as "download" buttons), only content editors can write
+    match /services/{serviceId}/files/{fileName} {
+      allow read: if true;
+      allow write: if canEditContent() && isValidDoc();
+      allow delete: if canEditContent();
+    }
+
+    // Anything else: locked down
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
