@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import { collection, doc } from 'firebase/firestore';
+import { db } from '../firebase';
 import RichTextField from '../components/RichTextField';
+import { ServiceImagesField, ServiceFilesField } from './ServiceMediaFields';
 import { SERVICE_CATEGORIES } from '../lib/serviceCategories';
 
 function fmtDate(ts) {
@@ -22,12 +25,15 @@ const EMPTY = {
   textoBoton: 'Solicitar cotización',
   whatsappMensaje: '',
   active: true,
+  images: [],
+  files: [],
 };
 
 export default function ServiceModal({ initial, onSave, onCancel }) {
   const [form, setForm] = useState(initial ? { ...EMPTY, ...initial } : EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [workingId] = useState(() => initial?.id || doc(collection(db, 'services')).id);
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -45,7 +51,7 @@ export default function ServiceModal({ initial, onSave, onCancel }) {
       const message =
         form.whatsappMensaje?.trim() ||
         `Hola, deseo recibir información y una cotización sobre el servicio de ${form.nombre.trim()}.`;
-      await onSave({ ...form, nombre: form.nombre.trim(), whatsappMensaje: message });
+      await onSave({ ...form, nombre: form.nombre.trim(), whatsappMensaje: message }, workingId);
     } catch (err) {
       setError('No se pudo guardar: ' + err.message);
     } finally {
@@ -115,6 +121,9 @@ export default function ServiceModal({ initial, onSave, onCancel }) {
           <input type="checkbox" checked={form.active} onChange={(e) => set('active', e.target.checked)} />
           Servicio activo (visible en la web)
         </label>
+
+        <ServiceImagesField serviceId={workingId} images={form.images || []} onChange={(images) => set('images', images)} />
+        <ServiceFilesField serviceId={workingId} files={form.files || []} onChange={(files) => set('files', files)} />
 
         {error && <div className="banner error" style={{ marginTop: 16 }}>{error}</div>}
 

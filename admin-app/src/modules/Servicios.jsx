@@ -5,6 +5,7 @@ import {
   query,
   orderBy,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   doc,
@@ -61,18 +62,18 @@ export default function Servicios() {
     return map;
   }, [services, search, categoryFilter, estadoFilter]);
 
-  async function saveService(data) {
+  async function saveService(data, workingId) {
     if (modal.editing) {
-      await updateDoc(doc(db, 'services', modal.editing.id), {
+      await updateDoc(doc(db, 'services', workingId), {
         ...data,
         updatedAt: serverTimestamp(),
         updatedBy: user.uid,
         updatedByName: actorName,
       });
-      logActivity({ uid: user.uid, accion: 'editar', modulo: 'servicios', docId: modal.editing.id, detalle: data.nombre });
+      logActivity({ uid: user.uid, accion: 'editar', modulo: 'servicios', docId: workingId, detalle: data.nombre });
     } else {
       const siblingMax = services.filter((s) => s.categoria === data.categoria).reduce((m, s) => Math.max(m, s.order || 0), 0);
-      const ref = await addDoc(collection(db, 'services'), {
+      await setDoc(doc(db, 'services', workingId), {
         ...data,
         order: siblingMax + 1,
         isOriginal: false,
@@ -82,7 +83,7 @@ export default function Servicios() {
         updatedBy: user.uid,
         updatedByName: actorName,
       });
-      logActivity({ uid: user.uid, accion: 'crear', modulo: 'servicios', docId: ref.id, detalle: data.nombre });
+      logActivity({ uid: user.uid, accion: 'crear', modulo: 'servicios', docId: workingId, detalle: data.nombre });
     }
     setModal(null);
   }

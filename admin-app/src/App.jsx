@@ -9,10 +9,12 @@ import FAQs from './modules/FAQs';
 import ComoTrabajamos from './modules/ComoTrabajamos';
 import Operadores from './modules/Operadores';
 import Servicios from './modules/Servicios';
+import WhatsAppSettings from './modules/WhatsAppSettings';
 import './components/pages.css';
 
 const MESSAGE_ROLES = ['superadmin', 'admin', 'comercial'];
 const CONTENT_ROLES = ['superadmin', 'admin', 'editor'];
+const SETTINGS_ROLES = ['superadmin', 'admin'];
 
 function Screen({ children }) {
   return <div className="auth-screen">{children}</div>;
@@ -92,6 +94,8 @@ function ModuleRouter({ path, role }) {
       return CONTENT_ROLES.includes(role) ? <Operadores /> : <NoAccess />;
     case 'servicios':
       return CONTENT_ROLES.includes(role) ? <Servicios /> : <NoAccess />;
+    case 'whatsapp':
+      return SETTINGS_ROLES.includes(role) ? <WhatsAppSettings /> : <NoAccess />;
     case '':
     default:
       return <Dashboard />;

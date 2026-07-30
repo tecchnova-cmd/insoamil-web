@@ -43,3 +43,110 @@
 .svc-tag.inactive { background: #fdecec; color: #b3261e; }
 
 .svc-actions { display: flex; gap: 2px; }
+
+/* ---- media fields (images/files) ---- */
+.media-field {
+  margin-top: 16px;
+}
+.media-field > label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-ink-soft);
+  margin-bottom: 8px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.media-thumb {
+  position: relative;
+  border: 1px solid var(--p-line);
+  border-radius: 12px;
+  padding: 8px;
+  background: var(--p-bg);
+}
+
+.media-thumb img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.media-primary-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--p-orange);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+
+.media-alt-input {
+  width: 100%;
+  padding: 5px 7px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--p-line);
+  margin-bottom: 6px;
+}
+
+.media-thumb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.media-thumb-actions .icon-btn {
+  width: 26px;
+  height: 26px;
+  font-size: 0.78rem;
+}
+
+.media-add-btn {
+  border: 2px dashed var(--p-line);
+  border-radius: 12px;
+  background: none;
+  color: var(--p-ink-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 90px;
+}
+.media-add-btn:hover {
+  border-color: var(--p-green);
+  color: var(--p-green-deep);
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--p-line);
+}
+.file-row:first-of-type { border-top: none; }
+
+.file-type-badge {
+  background: var(--p-green-light);
+  color: var(--p-green-deep);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.file-info { flex: 1; }
+.file-info strong { display: block; font-size: 0.86rem; }
+.file-info span { font-size: 0.76rem; color: var(--p-ink-soft); }

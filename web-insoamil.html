@@ -1083,6 +1083,138 @@
   }
   .legal-close:hover { background: var(--line); }
 
+  /* ===== SERVICE DETAIL MODAL ===== */
+  .servicio-card {
+    cursor: pointer;
+  }
+  .service-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 20, 14, 0.72);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+  }
+  .service-overlay.active { display: flex; }
+  .service-detail {
+    background: var(--card);
+    width: 100%;
+    max-width: 760px;
+    max-height: 86vh;
+    overflow-y: auto;
+    border-radius: 24px;
+    padding: 40px;
+    position: relative;
+    box-shadow: var(--shadow);
+  }
+  .service-detail-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--green-light);
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--ink);
+    z-index: 1;
+  }
+  .sd-num {
+    display: inline-block;
+    font-family: var(--ff-head);
+    font-weight: 800;
+    color: var(--green-deep);
+    background: var(--green-light);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+  .sd-title {
+    font-size: 1.5rem;
+    padding-right: 36px;
+    margin-bottom: 8px;
+  }
+  .sd-summary {
+    color: var(--ink-soft);
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+  .sd-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+  .sd-gallery img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.25s ease;
+  }
+  .sd-gallery a:hover img { transform: scale(1.04); }
+  .sd-section {
+    margin-bottom: 22px;
+  }
+  .sd-section h4 {
+    font-family: var(--ff-head);
+    font-size: 1rem;
+    color: var(--green-deep);
+    margin-bottom: 8px;
+  }
+  .sd-section .rich p { margin: 0 0 8px; color: var(--ink-soft); font-size: 0.94rem; line-height: 1.6; }
+  .sd-section .rich ul { padding-left: 20px; margin: 6px 0; color: var(--ink-soft); font-size: 0.94rem; }
+  .sd-section .rich a { color: var(--green-deep); }
+  .sd-meta-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    font-size: 0.9rem;
+  }
+  .sd-meta-row div span.label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  .sd-files a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+  .sd-files a:hover { border-color: var(--green); }
+  .sd-files .file-badge {
+    background: var(--green-light);
+    color: var(--green-deep);
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .sd-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
     .nav-links { display: none; }
@@ -1684,6 +1816,13 @@
   </div>
 </div>
 
+<div class="service-overlay" id="serviceOverlay" onclick="if(event.target===this) closeServiceDetail()">
+  <div class="service-detail">
+    <button class="service-detail-close" onclick="closeServiceDetail()" aria-label="Cerrar">✕</button>
+    <div id="serviceDetailContent"></div>
+  </div>
+</div>
+
 <script>
   // Nav scroll state
   const header = document.getElementById('header');
@@ -1821,6 +1960,39 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+
+  // ---- Número de WhatsApp general (editable desde el panel) ----
+  let whatsappNumber = '593982425506';
+
+  function formatWhatsappDisplay(num) {
+    if (/^593\d{9}$/.test(num)) {
+      return '+593 ' + num.slice(3, 5) + ' ' + num.slice(5, 8) + ' ' + num.slice(8);
+    }
+    return '+' + num;
+  }
+
+  function syncWhatsappLinks() {
+    document.querySelectorAll('a[href^="https://wa.me/"]').forEach((a) => {
+      try {
+        const url = new URL(a.href);
+        const text = url.searchParams.get('text') || '';
+        a.href = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(text);
+      } catch {}
+    });
+    document.querySelectorAll('a[href^="tel:+"]').forEach((a) => {
+      a.href = 'tel:+' + whatsappNumber;
+      if (/^\+\d{3} \d{2} \d{3} \d{4}$/.test(a.textContent.trim())) {
+        a.textContent = formatWhatsappDisplay(whatsappNumber);
+      }
+    });
+  }
+
+  onSnapshot(doc(db, 'siteSettings', 'general'), (snap) => {
+    if (snap.exists() && snap.data().whatsappNumber) {
+      whatsappNumber = snap.data().whatsappNumber;
+      syncWhatsappLinks();
+    }
+  });
 
   const contactForm = document.getElementById('contactForm');
   const statusBox = document.getElementById('cf-status');
@@ -1975,7 +2147,7 @@
       ctCtaBtn.textContent = data.buttonText;
       ctCtaBtn.style.display = 'inline-block';
       if (data.buttonType === 'whatsapp') {
-        ctCtaBtn.href = 'https://wa.me/593982425506?text=' + encodeURIComponent(data.buttonMessage || 'Hola, deseo más información sobre sus servicios ambientales');
+        ctCtaBtn.href = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(data.buttonMessage || 'Hola, deseo más información sobre sus servicios ambientales');
         ctCtaBtn.target = '_blank';
         ctCtaBtn.rel = 'noopener';
       } else {
@@ -1985,6 +2157,7 @@
     } else {
       ctCtaBtn.style.display = 'none';
     }
+    syncWhatsappLinks();
   });
 
   onSnapshot(
@@ -2057,7 +2230,7 @@
 
   function ctaHref(block) {
     if (block.ctaType === 'whatsapp') {
-      return 'https://wa.me/593982425506?text=' + encodeURIComponent(block.ctaMessage || 'Hola, deseo más información sobre sus servicios ambientales');
+      return 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(block.ctaMessage || 'Hola, deseo más información sobre sus servicios ambientales');
     }
     return '#contacto';
   }
@@ -2098,13 +2271,18 @@
         </div>`
       )
       .join('');
+    syncWhatsappLinks();
   });
 
   // ---- Servicios especializados (leídos en vivo desde Firestore) ----
+  let allServicesById = {};
+
   onSnapshot(
     query(collection(db, 'services'), where('active', '==', true), orderBy('order', 'asc')),
     (snap) => {
       const services = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      allServicesById = Object.fromEntries(services.map((s) => [s.id, s]));
+
       const byCategory = {};
       services.forEach((s) => {
         (byCategory[s.categoria] = byCategory[s.categoria] || []).push(s);
@@ -2120,7 +2298,7 @@
         panel.innerHTML = items
           .map((s) => {
             const num = (s.numeroOriginal || '').toString().padStart(2, '0');
-            return `<div class="servicio-card"><span class="servicio-num">${num}</span><span class="txt">${escapeHtml(s.nombre)}</span></div>`;
+            return `<div class="servicio-card" onclick="openServiceDetail('${s.id}')"><span class="servicio-num">${num}</span><span class="txt">${escapeHtml(s.nombre)}</span></div>`;
           })
           .join('');
       });
@@ -2131,6 +2309,75 @@
       });
     }
   );
+
+  function sdSection(title, md) {
+    if (!md || !md.trim()) return '';
+    return `<div class="sd-section"><h4>${escapeHtml(title)}</h4><div class="rich">${markdownLiteToHtml(md)}</div></div>`;
+  }
+
+  function openServiceDetail(id) {
+    const s = allServicesById[id];
+    if (!s) return;
+
+    const num = (s.numeroOriginal || '').toString().padStart(2, '0');
+    const images = (s.images || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+    const files = s.files || [];
+
+    const galleryHtml = images.length
+      ? `<div class="sd-gallery">${images
+          .map((img) => `<a href="${img.url}" target="_blank" rel="noopener"><img src="${img.url}" alt="${escapeHtml(img.alt || s.nombre)}"></a>`)
+          .join('')}</div>`
+      : '';
+
+    const filesHtml = files.length
+      ? `<div class="sd-section"><h4>Archivos descargables</h4><div class="sd-files">${files
+          .map(
+            (f) =>
+              `<a href="${f.url}" target="_blank" rel="noopener"><span class="file-badge">${escapeHtml(f.type || '')}</span> ${escapeHtml(f.name || '')}</a>`
+          )
+          .join('')}</div></div>`
+      : '';
+
+    const whatsappMsg = s.whatsappMensaje || `Hola, deseo recibir información y una cotización sobre el servicio de ${s.nombre}.`;
+    const whatsappHref = 'https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(whatsappMsg);
+
+    document.getElementById('serviceDetailContent').innerHTML = `
+      <span class="sd-num">Servicio ${num}</span>
+      <h2 class="sd-title">${escapeHtml(s.nombre)}</h2>
+      ${s.descripcionResumida ? `<p class="sd-summary">${escapeHtml(s.descripcionResumida)}</p>` : ''}
+      ${galleryHtml}
+      ${s.tiempoEstimado ? `<div class="sd-meta-row"><div><span class="label">Tiempo estimado</span>${escapeHtml(s.tiempoEstimado)}</div></div>` : ''}
+      ${sdSection('Descripción', s.descripcionCompleta)}
+      ${sdSection('Beneficios', s.beneficios)}
+      ${sdSection('Alcance', s.alcance)}
+      ${sdSection('Proceso', s.proceso)}
+      ${sdSection('Requisitos', s.requisitos)}
+      ${sdSection('Observaciones', s.observaciones)}
+      ${filesHtml}
+      <div class="sd-actions">
+        <a href="${whatsappHref}" target="_blank" rel="noopener" class="btn btn-primary">${escapeHtml(s.textoBoton || 'Escribir por WhatsApp')}</a>
+        <a href="#contacto" class="btn btn-outline" onclick="closeServiceDetail()">Solicitar cotización</a>
+      </div>
+    `;
+
+    document.getElementById('serviceOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    syncWhatsappLinks();
+  }
+
+  function closeServiceDetail() {
+    document.getElementById('serviceOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeServiceDetail();
+  });
+
+  // Module scripts don't leak to global scope — expose for the inline
+  // onclick="" attributes on dynamically rendered service cards.
+  window.openServiceDetail = openServiceDetail;
+  window.closeServiceDetail = closeServiceDetail;
 </script>
 
 </body>

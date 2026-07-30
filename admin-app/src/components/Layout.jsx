@@ -40,6 +40,12 @@ const NAV_ITEMS = [
     icon: '🧾',
     roles: ['superadmin', 'admin', 'editor'],
   },
+  {
+    key: 'whatsapp',
+    label: 'Contacto y WhatsApp',
+    icon: '📱',
+    roles: ['superadmin', 'admin'],
+  },
 ];
 
 const ROLE_LABELS = {
