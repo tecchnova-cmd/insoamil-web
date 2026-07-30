@@ -1,0 +1,45 @@
+.svc-cat-card {
+  background: var(--p-card);
+  border: 1px solid var(--p-line);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+}
+
+.svc-cat-card h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  margin: 0 0 4px;
+}
+
+.svc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-top: 1px solid var(--p-line);
+}
+.svc-row:first-of-type { border-top: none; }
+
+.svc-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  color: var(--p-green-deep);
+  font-size: 0.85rem;
+  min-width: 26px;
+}
+
+.svc-info { flex: 1; }
+.svc-info strong { display: block; font-size: 0.9rem; }
+.svc-info .svc-badges { display: flex; gap: 6px; margin-top: 3px; }
+
+.svc-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.svc-tag.original { background: var(--p-green-light); color: var(--p-green-deep); }
+.svc-tag.inactive { background: #fdecec; color: #b3261e; }
+
+.svc-actions { display: flex; gap: 2px; }

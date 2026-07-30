@@ -8,6 +8,7 @@ import Mensajes from './modules/Mensajes';
 import FAQs from './modules/FAQs';
 import ComoTrabajamos from './modules/ComoTrabajamos';
 import Operadores from './modules/Operadores';
+import Servicios from './modules/Servicios';
 import './components/pages.css';
 
 const MESSAGE_ROLES = ['superadmin', 'admin', 'comercial'];
@@ -89,6 +90,8 @@ function ModuleRouter({ path, role }) {
       return CONTENT_ROLES.includes(role) ? <ComoTrabajamos /> : <NoAccess />;
     case 'operadores':
       return CONTENT_ROLES.includes(role) ? <Operadores /> : <NoAccess />;
+    case 'servicios':
+      return CONTENT_ROLES.includes(role) ? <Servicios /> : <NoAccess />;
     case '':
     default:
       return <Dashboard />;

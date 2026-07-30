@@ -34,6 +34,12 @@ const NAV_ITEMS = [
     icon: '🏗️',
     roles: ['superadmin', 'admin', 'editor'],
   },
+  {
+    key: 'servicios',
+    label: 'Servicios especializados',
+    icon: '🧾',
+    roles: ['superadmin', 'admin', 'editor'],
+  },
 ];
 
 const ROLE_LABELS = {

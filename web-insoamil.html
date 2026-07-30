@@ -1385,37 +1385,11 @@
       <button class="tab-btn" data-tab="contingencia">Planes de Contingencia</button>
     </div>
 
-    <div class="servicios-panel active" data-panel="diagnostico">
-      <div class="servicio-card"><span class="servicio-num">01</span><span class="txt">Certificado Ambiental</span></div>
-      <div class="servicio-card"><span class="servicio-num">02</span><span class="txt">Diagnóstico Ambiental</span></div>
-      <div class="servicio-card"><span class="servicio-num">03</span><span class="txt">Registro Ambiental</span></div>
-    </div>
-
-    <div class="servicios-panel" data-panel="licenciamiento">
-      <div class="servicio-card"><span class="servicio-num">04</span><span class="txt">Estudios de Impacto Ambiental Ex antes y Ex post</span></div>
-      <div class="servicio-card"><span class="servicio-num">05</span><span class="txt">Licencia Ambiental</span></div>
-    </div>
-
-    <div class="servicios-panel" data-panel="monitoreo">
-      <div class="servicio-card"><span class="servicio-num">06</span><span class="txt">Aprobación de Puntos de Monitoreo</span></div>
-      <div class="servicio-card"><span class="servicio-num">07</span><span class="txt">Informes de Reportes de Monitoreo</span></div>
-      <div class="servicio-card"><span class="servicio-num">08</span><span class="txt">Informe Ambiental de Cumplimiento (IAC)</span></div>
-      <div class="servicio-card"><span class="servicio-num">09</span><span class="txt">Auditoría Ambiental de Cumplimiento (AAC)</span></div>
-      <div class="servicio-card"><span class="servicio-num">10</span><span class="txt">Actualización de Plan de Manejo Ambiental</span></div>
-      <div class="servicio-card"><span class="servicio-num">11</span><span class="txt">Auditoría Ambiental de Conjunción</span></div>
-    </div>
-
-    <div class="servicios-panel" data-panel="desechos">
-      <div class="servicio-card"><span class="servicio-num">12</span><span class="txt">Registro Generador de Desechos Peligrosos y/o Especiales</span></div>
-      <div class="servicio-card"><span class="servicio-num">13</span><span class="txt">Declaraciones Anuales Desechos Peligrosos y/o Especiales</span></div>
-      <div class="servicio-card"><span class="servicio-num">14</span><span class="txt">Plan de Minimización Desechos Peligrosos y/o Especiales</span></div>
-      <div class="servicio-card"><span class="servicio-num">15</span><span class="txt">Informe de Resultados al Plan de Minimización de Desechos</span></div>
-    </div>
-
-    <div class="servicios-panel" data-panel="contingencia">
-      <div class="servicio-card"><span class="servicio-num">16</span><span class="txt">Plan Emergente</span></div>
-      <div class="servicio-card"><span class="servicio-num">17</span><span class="txt">Plan de Acción</span></div>
-    </div>
+    <div class="servicios-panel active" data-panel="diagnostico"><p class="muted-note">Cargando...</p></div>
+    <div class="servicios-panel" data-panel="licenciamiento"></div>
+    <div class="servicios-panel" data-panel="monitoreo"></div>
+    <div class="servicios-panel" data-panel="desechos"></div>
+    <div class="servicios-panel" data-panel="contingencia"></div>
   </div>
 </section>
 
@@ -2125,6 +2099,38 @@
       )
       .join('');
   });
+
+  // ---- Servicios especializados (leídos en vivo desde Firestore) ----
+  onSnapshot(
+    query(collection(db, 'services'), where('active', '==', true), orderBy('order', 'asc')),
+    (snap) => {
+      const services = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      const byCategory = {};
+      services.forEach((s) => {
+        (byCategory[s.categoria] = byCategory[s.categoria] || []).push(s);
+      });
+
+      document.querySelectorAll('.servicios-panel').forEach((panel) => {
+        const cat = panel.dataset.panel;
+        const items = byCategory[cat] || [];
+        if (items.length === 0) {
+          panel.innerHTML = '<p class="muted-note">Sin servicios en esta categoría.</p>';
+          return;
+        }
+        panel.innerHTML = items
+          .map((s) => {
+            const num = (s.numeroOriginal || '').toString().padStart(2, '0');
+            return `<div class="servicio-card"><span class="servicio-num">${num}</span><span class="txt">${escapeHtml(s.nombre)}</span></div>`;
+          })
+          .join('');
+      });
+    },
+    () => {
+      document.querySelectorAll('.servicios-panel').forEach((panel) => {
+        panel.innerHTML = '<p class="muted-note">No se pudieron cargar los servicios.</p>';
+      });
+    }
+  );
 </script>
 
 </body>
