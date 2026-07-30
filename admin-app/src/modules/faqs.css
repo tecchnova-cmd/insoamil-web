@@ -1,0 +1,161 @@
+.faq-cat-card {
+  background: var(--p-card);
+  border: 1px solid var(--p-line);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+}
+
+.faq-cat-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.faq-cat-head h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  flex: 1;
+}
+
+.faq-cat-head .inactive-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #b3261e;
+  background: #fdecec;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 4px 7px;
+  border-radius: 8px;
+  color: var(--p-ink-soft);
+}
+
+.icon-btn:hover {
+  background: var(--p-green-light);
+  color: var(--p-green-deep);
+}
+
+.icon-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.faq-q-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--p-line);
+}
+
+.faq-q-row:first-of-type {
+  border-top: none;
+}
+
+.faq-q-text {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.faq-q-text .q-inactive {
+  color: var(--p-ink-soft);
+  font-style: italic;
+}
+
+.faq-q-actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+/* ---- Modal forms ---- */
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 14, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 180;
+  padding: 20px;
+}
+
+.form-box {
+  background: var(--p-card);
+  border-radius: 18px;
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.4);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.form-box h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  margin: 0 0 18px;
+}
+
+.form-box label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-ink-soft);
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+
+.form-box input[type='text'],
+.form-box select,
+.form-box textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--p-line);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.form-box textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  text-transform: none;
+  font-weight: 500;
+  color: var(--p-ink);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.form-meta {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--p-line);
+  font-size: 0.78rem;
+  color: var(--p-ink-soft);
+}

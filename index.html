@@ -175,7 +175,74 @@
   }
   .nav-cta:hover { transform: translateY(-2px); }
 
-  .nav-toggle { display: none; }
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--green-light);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    margin: 0 auto;
+    background: var(--green-deep);
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100vh;
+    width: min(300px, 80vw);
+    background: var(--card);
+    box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+    z-index: 99;
+    padding: 100px 28px 28px;
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .mobile-menu.open { transform: translateX(0); }
+  .mobile-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mobile-menu a {
+    display: block;
+    padding: 12px 4px;
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,20,14,0.4);
+    z-index: 98;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .mobile-menu-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 
   /* ===== HERO ===== */
   .hero {
@@ -411,6 +478,72 @@
     margin-top: 14px;
     color: var(--ink-soft);
     font-size: 1.04rem;
+  }
+
+  /* ===== FAQ ===== */
+  .muted-note {
+    color: var(--ink-soft);
+    font-size: 0.94rem;
+    text-align: center;
+  }
+  .faq-container {
+    max-width: 820px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .faq-category-title {
+    font-family: var(--ff-head);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--green-deep);
+    margin-bottom: 12px;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 4px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: var(--ff-head);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .faq-question:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .faq-question .chevron {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    color: var(--green-deep);
+  }
+  .faq-item.open .faq-question .chevron {
+    transform: rotate(180deg);
+  }
+  .faq-answer-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .faq-answer {
+    padding: 0 4px 20px;
+    color: var(--ink-soft);
+    font-size: 0.94rem;
+    line-height: 1.65;
   }
 
   /* ===== SOBRE NOSOTROS ===== */
@@ -860,6 +993,8 @@
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
     .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .nav-toggle { display: flex; }
     .about-grid { grid-template-columns: 1fr; }
     .sectores-grid { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -891,11 +1026,28 @@
       <li><a href="#nosotros">Nosotros</a></li>
       <li><a href="#sectores">Sectores</a></li>
       <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#faq">Preguntas Frecuentes</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <a href="#contacto" class="nav-cta">Contáctanos</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 </header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#sectores">Sectores</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#faq">Preguntas Frecuentes</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#contacto" class="btn btn-primary" style="display:block; text-align:center;">Contáctanos</a>
+</div>
+<div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
 
 <section class="hero" id="inicio">
   <div class="hero-blob"></div>
@@ -1199,6 +1351,19 @@
   </div>
 </section>
 
+<section id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Preguntas Frecuentes</span>
+      <h2>Resolvemos tus dudas</h2>
+      <p>Lo que más nos preguntan sobre nuestros servicios, procesos ambientales y cotizaciones.</p>
+    </div>
+    <div class="faq-container" id="faqContainer">
+      <p class="muted-note">Cargando preguntas frecuentes...</p>
+    </div>
+  </div>
+</section>
+
 <section class="contacto" id="contacto">
   <div class="container">
     <div class="contact-grid">
@@ -1468,6 +1633,34 @@
     header.classList.toggle('scrolled', window.scrollY > 40);
   });
 
+  // Mobile menu
+  const navToggle = document.getElementById('navToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
+
+  function closeMobileMenu() {
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    mobileMenu.classList.remove('open');
+    mobileMenuBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  navToggle.addEventListener('click', () => {
+    const willOpen = !mobileMenu.classList.contains('open');
+    navToggle.classList.toggle('open', willOpen);
+    navToggle.setAttribute('aria-expanded', String(willOpen));
+    mobileMenu.classList.toggle('open', willOpen);
+    mobileMenuBackdrop.classList.toggle('open', willOpen);
+    document.body.style.overflow = willOpen ? 'hidden' : '';
+  });
+
+  mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
+  mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMobileMenu));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMobileMenu();
+  });
+
   // Scroll progress bar
   const scrollProgress = document.getElementById('scrollProgress');
   window.addEventListener('scroll', () => {
@@ -1555,7 +1748,7 @@
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
-  import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+  import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 
   // Public Firebase config — these are identifiers, not secrets; security is
   // enforced by Firestore rules (see firestore.rules), not by hiding this object.
@@ -1630,6 +1823,84 @@
       submitBtn.textContent = 'Enviar mensaje';
     }
   });
+
+  // ---- Preguntas Frecuentes (leídas en vivo desde Firestore) ----
+  const faqContainer = document.getElementById('faqContainer');
+  let faqCategories = [];
+  let faqItems = [];
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function renderFaq() {
+    if (faqCategories.length === 0) {
+      faqContainer.innerHTML = '<p class="muted-note">Todavía no hay preguntas frecuentes publicadas.</p>';
+      return;
+    }
+
+    faqContainer.innerHTML = faqCategories
+      .map((cat) => {
+        const items = faqItems.filter((f) => f.categoryId === cat.id);
+        if (items.length === 0) return '';
+        const itemsHtml = items
+          .map(
+            (item, idx) => `
+            <div class="faq-item" data-faq-id="${item.id}">
+              <button class="faq-question" id="faq-btn-${item.id}" aria-expanded="false" aria-controls="faq-answer-${item.id}">
+                <span>${escapeHtml(item.question)}</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="faq-answer-wrap" id="faq-answer-${item.id}" role="region" aria-labelledby="faq-btn-${item.id}">
+                <div class="faq-answer">${escapeHtml(item.answer)}</div>
+              </div>
+            </div>`
+          )
+          .join('');
+        return `<div class="faq-category"><div class="faq-category-title">${escapeHtml(cat.name)}</div>${itemsHtml}</div>`;
+      })
+      .join('');
+
+    faqContainer.querySelectorAll('.faq-question').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        // Only one open at a time.
+        faqContainer.querySelectorAll('.faq-item.open').forEach((openItem) => {
+          openItem.classList.remove('open');
+          openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+          openItem.querySelector('.faq-answer-wrap').style.maxHeight = null;
+        });
+        if (!wasOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          const wrap = item.querySelector('.faq-answer-wrap');
+          wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        }
+      });
+    });
+  }
+
+  onSnapshot(
+    query(collection(db, 'faqCategories'), where('active', '==', true), orderBy('order', 'asc')),
+    (snap) => {
+      faqCategories = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      renderFaq();
+    },
+    () => {
+      faqContainer.innerHTML = '<p class="muted-note">No se pudieron cargar las preguntas frecuentes.</p>';
+    }
+  );
+
+  onSnapshot(
+    query(collection(db, 'faqs'), where('active', '==', true), orderBy('order', 'asc')),
+    (snap) => {
+      faqItems = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      renderFaq();
+    }
+  );
 </script>
 
 </body>

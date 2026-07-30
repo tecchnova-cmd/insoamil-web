@@ -16,6 +16,12 @@ const NAV_ITEMS = [
     badge: 'newMessages',
     roles: ['superadmin', 'admin', 'comercial'],
   },
+  {
+    key: 'faqs',
+    label: 'Preguntas frecuentes',
+    icon: '❓',
+    roles: ['superadmin', 'admin', 'editor'],
+  },
 ];
 
 const ROLE_LABELS = {

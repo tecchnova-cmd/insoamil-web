@@ -5,9 +5,11 @@ import ChangePassword from './auth/ChangePassword';
 import Layout from './components/Layout';
 import Dashboard from './modules/Dashboard';
 import Mensajes from './modules/Mensajes';
+import FAQs from './modules/FAQs';
 import './components/pages.css';
 
 const MESSAGE_ROLES = ['superadmin', 'admin', 'comercial'];
+const CONTENT_ROLES = ['superadmin', 'admin', 'editor'];
 
 function Screen({ children }) {
   return <div className="auth-screen">{children}</div>;
@@ -79,6 +81,8 @@ function ModuleRouter({ path, role }) {
   switch (path) {
     case 'mensajes':
       return MESSAGE_ROLES.includes(role) ? <Mensajes /> : <NoAccess />;
+    case 'faqs':
+      return CONTENT_ROLES.includes(role) ? <FAQs /> : <NoAccess />;
     case '':
     default:
       return <Dashboard />;
