@@ -81,6 +81,18 @@ body {
   font-size: 1.05rem;
 }
 
+.nav-badge {
+  margin-left: auto;
+  background: var(--p-orange);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 100px;
+  min-width: 18px;
+  text-align: center;
+}
+
 .panel-main {
   flex: 1;
   display: flex;

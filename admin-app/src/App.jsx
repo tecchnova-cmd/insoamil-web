@@ -4,7 +4,10 @@ import Login from './auth/Login';
 import ChangePassword from './auth/ChangePassword';
 import Layout from './components/Layout';
 import Dashboard from './modules/Dashboard';
+import Mensajes from './modules/Mensajes';
 import './components/pages.css';
+
+const MESSAGE_ROLES = ['superadmin', 'admin', 'comercial'];
 
 function Screen({ children }) {
   return <div className="auth-screen">{children}</div>;
@@ -58,13 +61,24 @@ function Gate() {
 
   return (
     <Layout>
-      <ModuleRouter path={path} />
+      <ModuleRouter path={path} role={profile?.role} />
     </Layout>
   );
 }
 
-function ModuleRouter({ path }) {
+function NoAccess() {
+  return (
+    <div className="page-head">
+      <h1>Sin acceso</h1>
+      <p>Tu rol no tiene permiso para ver esta sección.</p>
+    </div>
+  );
+}
+
+function ModuleRouter({ path, role }) {
   switch (path) {
+    case 'mensajes':
+      return MESSAGE_ROLES.includes(role) ? <Mensajes /> : <NoAccess />;
     case '':
     default:
       return <Dashboard />;

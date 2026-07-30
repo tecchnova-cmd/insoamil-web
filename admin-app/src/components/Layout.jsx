@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../firebase';
 import { useAuth } from '../auth/AuthContext';
 import { useRouter } from '../router';
 import './layout.css';
 
 // Sidebar items are added one phase at a time — never show a link to a
 // module that doesn't actually work yet.
-const NAV_ITEMS = [{ key: '', label: 'Dashboard', icon: '📊' }];
+const NAV_ITEMS = [
+  { key: '', label: 'Dashboard', icon: '📊' },
+  {
+    key: 'mensajes',
+    label: 'Mensajes',
+    icon: '✉️',
+    badge: 'newMessages',
+    roles: ['superadmin', 'admin', 'comercial'],
+  },
+];
 
 const ROLE_LABELS = {
   superadmin: 'Superadministrador',
@@ -15,29 +26,48 @@ const ROLE_LABELS = {
   readonly: 'Solo lectura',
 };
 
+function useNewMessagesCount(enabled) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!enabled) return;
+    const q = query(collection(db, 'messages'), where('estado', '==', 'nuevo'));
+    const unsub = onSnapshot(q, (snap) => setCount(snap.size), () => setCount(0));
+    return unsub;
+  }, [enabled]);
+  return count;
+}
+
 export default function Layout({ children }) {
   const { profile, user, logout } = useAuth();
   const { path, navigate } = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const canSeeMessages = ['superadmin', 'admin', 'comercial'].includes(profile?.role);
+  const newMessages = useNewMessagesCount(canSeeMessages);
+  const badgeValues = { newMessages };
+  const visibleItems = NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(profile?.role));
 
   return (
     <div className="panel-shell">
       <aside className={`panel-sidebar ${menuOpen ? 'open' : ''}`}>
         <div className="panel-brand">INSOAMIL</div>
         <nav>
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              className={path === item.key ? 'active' : ''}
-              onClick={() => {
-                navigate(item.key);
-                setMenuOpen(false);
-              }}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
+          {visibleItems.map((item) => {
+            const badgeCount = item.badge ? badgeValues[item.badge] : 0;
+            return (
+              <button
+                key={item.key}
+                className={path === item.key ? 'active' : ''}
+                onClick={() => {
+                  navigate(item.key);
+                  setMenuOpen(false);
+                }}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                {item.label}
+                {badgeCount > 0 && <span className="nav-badge">{badgeCount}</span>}
+              </button>
+            );
+          })}
         </nav>
       </aside>
 
