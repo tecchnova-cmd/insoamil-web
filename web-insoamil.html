@@ -105,8 +105,12 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  header nav {
     padding: 18px 0;
-    transition: all 0.4s ease;
+    transition: padding 0.4s ease;
   }
 
   header.scrolled {
@@ -114,7 +118,77 @@
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: 0 1px 0 var(--line);
+  }
+
+  header.scrolled nav {
     padding: 12px 0;
+  }
+
+  /* ===== ANNOUNCEMENT BAR ===== */
+  .announcement-bar {
+    width: 100%;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .announcement-track {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    will-change: transform;
+    animation-name: announcement-scroll;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .announcement-track .ann-copy {
+    display: inline-flex;
+    white-space: nowrap;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding-right: 0;
+  }
+
+  @keyframes announcement-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .announcement-track {
+      animation: none !important;
+      transform: none !important;
+    }
+    .announcement-bar .announcement-track { display: none; }
+    .announcement-bar .sr-only {
+      position: static;
+      width: auto; height: auto;
+      margin: 0; padding: 0 16px;
+      clip: auto;
+      overflow: visible;
+      white-space: normal;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .announcement-bar { height: 34px; }
+    .announcement-track .ann-copy { font-size: 0.74rem; }
   }
 
   nav {
@@ -1265,6 +1339,13 @@
       <span></span><span></span><span></span>
     </button>
   </nav>
+  <div class="announcement-bar" id="announcementBar" style="display:none;">
+    <span class="sr-only" id="announcementSrText"></span>
+    <div class="announcement-track" id="announcementTrack" aria-hidden="true">
+      <span class="ann-copy" id="annCopyA"></span>
+      <span class="ann-copy" id="annCopyB"></span>
+    </div>
+  </div>
 </header>
 
 <div class="mobile-menu" id="mobileMenu">
@@ -1996,6 +2077,83 @@
       }
     });
   }
+
+  // ---- Franja informativa animada (leída en vivo desde Firestore) ----
+  const announcementBar = document.getElementById('announcementBar');
+  const announcementTrack = document.getElementById('announcementTrack');
+  const announcementSrText = document.getElementById('announcementSrText');
+  const annCopyA = document.getElementById('annCopyA');
+  const annCopyB = document.getElementById('annCopyB');
+
+  const ANNOUNCEMENT_SPEED_PX = { lenta: 40, normal: 70, rapida: 120 };
+  let announcementData = null;
+
+  function renderAnnouncementBar() {
+    if (!announcementData || announcementData.enabled === false) {
+      announcementBar.style.display = 'none';
+      return;
+    }
+
+    const text = (announcementData.text || '').trim();
+    if (!text) {
+      announcementBar.style.display = 'none';
+      return;
+    }
+
+    const separator = (announcementData.separator || '•').trim() || '•';
+    announcementBar.style.background = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(announcementData.backgroundColor || '')
+      ? announcementData.backgroundColor
+      : '#1E5631';
+    announcementTrack.style.color = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(announcementData.textColor || '')
+      ? announcementData.textColor
+      : '#FFFFFF';
+
+    // Screen readers get the plain message once — the scrolling copies are decorative.
+    announcementSrText.textContent = text;
+
+    // Must be visible before measuring widths below — getBoundingClientRect()
+    // returns 0 for display:none elements, which would break both the repeat
+    // count and the animation duration calculation.
+    announcementBar.style.display = 'flex';
+
+    const unit = text + ' ' + separator + ' ';
+
+    // Measure one unit's rendered width to know how many repeats are needed
+    // to comfortably exceed the viewport width (seamless loop, no visible gaps).
+    annCopyA.textContent = unit;
+    const unitWidth = annCopyA.getBoundingClientRect().width || 200;
+    // Each copy only needs to be slightly wider than the viewport for a
+    // seamless loop (translateX(-50%) shifts by exactly one copy's width).
+    const targetWidth = window.innerWidth * 1.15;
+    const repeats = Math.min(60, Math.max(3, Math.ceil(targetWidth / unitWidth) + 1));
+    const fullText = unit.repeat(repeats);
+
+    annCopyA.textContent = fullText;
+    annCopyB.textContent = fullText;
+
+    const pxPerSecond = ANNOUNCEMENT_SPEED_PX[announcementData.speed] || ANNOUNCEMENT_SPEED_PX.normal;
+    const halfWidth = annCopyA.getBoundingClientRect().width;
+    const duration = Math.max(4, halfWidth / pxPerSecond);
+    announcementTrack.style.animationDuration = duration + 's';
+  }
+
+  let announcementResizeTimer = null;
+  window.addEventListener('resize', () => {
+    if (!announcementData || announcementData.enabled === false) return;
+    clearTimeout(announcementResizeTimer);
+    announcementResizeTimer = setTimeout(renderAnnouncementBar, 300);
+  });
+
+  onSnapshot(
+    doc(db, 'siteSettings', 'announcementBar'),
+    (snap) => {
+      announcementData = snap.exists() ? snap.data() : null;
+      renderAnnouncementBar();
+    },
+    () => {
+      announcementBar.style.display = 'none';
+    }
+  );
 
   onSnapshot(doc(db, 'siteSettings', 'general'), (snap) => {
     if (!snap.exists()) return;

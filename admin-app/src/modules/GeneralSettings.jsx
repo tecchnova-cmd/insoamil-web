@@ -3,6 +3,7 @@ import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../auth/AuthContext';
 import { logActivity } from '../lib/activity';
+import AnnouncementBarSettings from './AnnouncementBarSettings';
 
 const DEFAULTS = {
   email: 'insoamil@gmail.com',
@@ -107,6 +108,8 @@ export default function GeneralSettings() {
           </button>
         </div>
       </form>
+
+      <AnnouncementBarSettings />
     </div>
   );
 }
