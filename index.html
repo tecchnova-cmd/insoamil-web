@@ -1290,7 +1290,7 @@
           <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
       </div>
-      <a href="https://www.instagram.com/insoamil" target="_blank" rel="noopener" class="ig-handle">@insoamil</a>
+      <a href="https://www.instagram.com/insoamil" target="_blank" rel="noopener" class="ig-handle ig-link">@insoamil</a>
       <div class="ig-category">Ingeniería Ambiental · Consultoría Legal Ambiental · Quevedo, Los Ríos, Ecuador</div>
       <p class="ig-bio">Asesoría ambiental en general: Regularización Ambiental, Mecanismos de Control, Procesos Administrativos y otros.</p>
 
@@ -1299,7 +1299,7 @@
       <div class="ig-actions">
         <a href="#contacto" class="btn btn-primary">Contactar</a>
         <a href="#servicios" class="btn btn-outline">Ver Servicios</a>
-        <a href="https://www.instagram.com/insoamil" target="_blank" rel="noopener" class="btn btn-outline">Seguir en Instagram</a>
+        <a href="https://www.instagram.com/insoamil" target="_blank" rel="noopener" class="btn btn-outline ig-link">Seguir en Instagram</a>
       </div>
 
       <div class="ig-mini-grid">
@@ -1572,7 +1572,7 @@
                 <circle cx="32" cy="26" r="9" fill="white"/>
               </svg>
             </div>
-            <div><small>Ubicación</small><strong>Parroquia 24 de Mayo, Av. Walter Andrade y Chang Murrieta, Quevedo, Los Ríos, Ecuador · CP 120302</strong></div>
+            <div><small>Ubicación</small><strong id="cLocation">Parroquia 24 de Mayo, Av. Walter Andrade y Chang Murrieta, Quevedo, Los Ríos, Ecuador · CP 120302</strong></div>
           </div>
           <div class="contact-item">
             <div class="ic">
@@ -1602,7 +1602,7 @@
                 <path d="M12 18 L32 34 L52 18" stroke="#EAF4FC" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <div><small>Email</small><strong><a href="mailto:insoamil@gmail.com">insoamil@gmail.com</a></strong></div>
+            <div><small>Email</small><strong><a href="mailto:insoamil@gmail.com" id="cEmailLink">insoamil@gmail.com</a></strong></div>
           </div>
           <div class="contact-item">
             <div class="ic brand">
@@ -1622,7 +1622,7 @@
                 <circle cx="42.5" cy="21.5" r="2.2" fill="white"/>
               </svg>
             </div>
-            <div><small>Instagram</small><strong><a href="https://www.instagram.com/insoamil" target="_blank" rel="noopener">@insoamil</a></strong></div>
+            <div><small>Instagram</small><strong><a href="https://www.instagram.com/insoamil" target="_blank" rel="noopener" class="ig-link">@insoamil</a></strong></div>
           </div>
           <div class="contact-item">
             <div class="ic brand">
@@ -1631,7 +1631,11 @@
                 <path d="M40 34 H35 V50 H29 V34 H25 V29 H29 V25.5 C29 20.7 31.6 18 36.4 18 H41 V23 H37.8 C35.9 23 35 23.9 35 25.7 V29 H41 Z" fill="white"/>
               </svg>
             </div>
-            <div><small>Facebook</small><strong><a href="https://www.facebook.com/share/1Ee5NEPgSC/" target="_blank" rel="noopener">INSOAMIL en Facebook</a></strong></div>
+            <div><small>Facebook</small><strong><a href="https://www.facebook.com/share/1Ee5NEPgSC/" target="_blank" rel="noopener" class="fb-link">INSOAMIL en Facebook</a></strong></div>
+          </div>
+          <div class="contact-item" id="cHorariosRow" style="display:none;">
+            <div class="ic">🕐</div>
+            <div><small>Horarios</small><strong id="cHorariosText"></strong></div>
           </div>
         </div>
       </div>
@@ -1681,7 +1685,7 @@
 
 <footer>
   <div class="container footer-inner">
-    <div>&copy; 2026 INSOAMIL. Todos los derechos reservados.</div>
+    <div id="footerCopyright">&copy; 2026 INSOAMIL. Todos los derechos reservados.</div>
     <nav class="footer-legal">
       <a href="#" onclick="openLegal('privacidad'); return false;">Política de Privacidad</a>
       <a href="#" onclick="openLegal('terminos'); return false;">Términos y Condiciones</a>
@@ -1963,6 +1967,7 @@
 
   // ---- Número de WhatsApp general (editable desde el panel) ----
   let whatsappNumber = '593982425506';
+  let contactEmail = 'insoamil@gmail.com';
 
   function formatWhatsappDisplay(num) {
     if (/^593\d{9}$/.test(num)) {
@@ -1988,9 +1993,48 @@
   }
 
   onSnapshot(doc(db, 'siteSettings', 'general'), (snap) => {
-    if (snap.exists() && snap.data().whatsappNumber) {
-      whatsappNumber = snap.data().whatsappNumber;
+    if (!snap.exists()) return;
+    const data = snap.data();
+
+    if (data.whatsappNumber) {
+      whatsappNumber = data.whatsappNumber;
       syncWhatsappLinks();
+    }
+
+    if (data.direccion) {
+      const el = document.getElementById('cLocation');
+      if (el) el.textContent = data.direccion;
+    }
+
+    if (data.horarios) {
+      const row = document.getElementById('cHorariosRow');
+      const text = document.getElementById('cHorariosText');
+      if (row && text) {
+        text.textContent = data.horarios;
+        row.style.display = '';
+      }
+    }
+
+    if (data.email) {
+      contactEmail = data.email;
+      const el = document.getElementById('cEmailLink');
+      if (el) {
+        el.href = 'mailto:' + data.email;
+        el.textContent = data.email;
+      }
+    }
+
+    if (data.instagramUrl) {
+      document.querySelectorAll('.ig-link').forEach((a) => (a.href = data.instagramUrl));
+    }
+
+    if (data.facebookUrl) {
+      document.querySelectorAll('.fb-link').forEach((a) => (a.href = data.facebookUrl));
+    }
+
+    if (data.footerText) {
+      const el = document.getElementById('footerCopyright');
+      if (el) el.innerHTML = '&copy; ' + new Date().getFullYear() + ' ' + escapeHtml(data.footerText);
     }
   });
 
@@ -2041,7 +2085,7 @@
 
       const subject = 'Consulta desde la web - ' + name;
       const body = 'Nombre: ' + name + (empresa ? '\nEmpresa: ' + empresa : '') + '\nEmail de contacto: ' + email + (telefono ? '\nTeléfono: ' + telefono : '') + '\n\nMensaje:\n' + message;
-      const mailtoUrl = 'mailto:insoamil@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      const mailtoUrl = 'mailto:' + contactEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
       window.location.href = mailtoUrl;
 
       contactForm.reset();

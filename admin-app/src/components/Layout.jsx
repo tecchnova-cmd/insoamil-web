@@ -3,6 +3,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../auth/AuthContext';
 import { useRouter } from '../router';
+import { ROLE_LABELS } from '../lib/roles';
 import './layout.css';
 
 // Sidebar items are added one phase at a time — never show a link to a
@@ -46,15 +47,25 @@ const NAV_ITEMS = [
     icon: '📱',
     roles: ['superadmin', 'admin'],
   },
+  {
+    key: 'usuarios',
+    label: 'Usuarios y permisos',
+    icon: '👥',
+    roles: ['superadmin'],
+  },
+  {
+    key: 'configuracion',
+    label: 'Configuración general',
+    icon: '⚙️',
+    roles: ['superadmin', 'admin'],
+  },
+  {
+    key: 'actividad',
+    label: 'Registro de actividad',
+    icon: '📜',
+    roles: ['superadmin', 'admin'],
+  },
 ];
-
-const ROLE_LABELS = {
-  superadmin: 'Superadministrador',
-  admin: 'Administrador',
-  editor: 'Editor',
-  comercial: 'Comercial',
-  readonly: 'Solo lectura',
-};
 
 function useNewMessagesCount(enabled) {
   const [count, setCount] = useState(0);

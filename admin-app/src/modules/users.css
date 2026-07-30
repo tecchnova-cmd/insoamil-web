@@ -1,0 +1,36 @@
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  border-top: 1px solid var(--p-line);
+}
+.user-row:first-of-type { border-top: none; }
+
+.user-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--p-green-light);
+  color: var(--p-green-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.user-info { flex: 1; }
+.user-info strong { display: block; font-size: 0.92rem; }
+.user-info span { font-size: 0.8rem; color: var(--p-ink-soft); }
+
+.role-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: var(--p-green-light);
+  color: var(--p-green-deep);
+}
+.role-pill.role-superadmin { background: #f1edfb; color: #6c3fc9; }
+.role-pill.role-inactive { background: #fdecec; color: #b3261e; }
