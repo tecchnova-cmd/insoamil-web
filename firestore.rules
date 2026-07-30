@@ -39,19 +39,25 @@ service cloud.firestore {
     }
 
     // ---------- users ----------
+    // User management (create/edit-others/revoke) is superadmin-only, matching
+    // the admin panel's "Usuarios y Permisos" module which is hidden from every
+    // other role — this rule is the real enforcement, the UI hiding is just UX.
     match /users/{uid} {
       allow read: if isSignedIn() && (request.auth.uid == uid || canRead());
       allow update: if isSignedIn() && request.auth.uid == uid
                     && request.resource.data.role == resource.data.role
                     && request.resource.data.active == resource.data.active; // self: can't change own role/active
-      allow update, delete: if isSuperOrAdmin() && !(resource.data.role == 'superadmin' && myRole() != 'superadmin');
-      allow create: if isSuperOrAdmin();
+      allow update, delete: if hasRole(['superadmin']);
+      allow create: if hasRole(['superadmin']);
     }
 
     // ---------- public, read-only content ----------
+    // Site-wide settings (contact info, WhatsApp number) — superadmin/admin only,
+    // matching the "Configuración General" / "Contacto y WhatsApp" modules
+    // (editors can touch page content, not business-wide settings).
     match /siteSettings/{docId} {
       allow read: if true;
-      allow write: if canEditContent();
+      allow write: if isSuperOrAdmin();
     }
 
     match /faqCategories/{docId} {
@@ -99,7 +105,7 @@ service cloud.firestore {
     // ---------- activity logs ----------
     match /activityLogs/{docId} {
       allow read: if isSuperOrAdmin();
-      allow create: if isSignedIn(); // app writes a log entry for the acting user
+      allow create: if isSignedIn() && myActive(); // app writes a log entry for the acting user
       allow update, delete: if false;
     }
   }

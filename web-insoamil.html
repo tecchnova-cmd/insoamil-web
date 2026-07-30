@@ -130,7 +130,10 @@
     font-family: var(--ff-head);
     font-weight: 800;
     font-size: 1.1rem;
+    color: white;
+    transition: color 0.3s ease;
   }
+  header.scrolled .brand { color: var(--ink); }
 
   .brand img {
     width: 40px; height: 40px;
@@ -149,7 +152,7 @@
 
   .nav-links a {
     position: relative;
-    color: var(--ink-soft);
+    color: rgba(255,255,255,0.88);
     transition: color 0.25s ease;
   }
   .nav-links a::after {
@@ -160,8 +163,10 @@
     background: var(--green);
     transition: width 0.3s ease;
   }
-  .nav-links a:hover { color: var(--ink); }
+  .nav-links a:hover { color: white; }
   .nav-links a:hover::after { width: 100%; }
+  header.scrolled .nav-links a { color: var(--ink-soft); }
+  header.scrolled .nav-links a:hover { color: var(--ink); }
 
   .nav-cta {
     background: var(--green-deep);
