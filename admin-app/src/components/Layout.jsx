@@ -22,6 +22,12 @@ const NAV_ITEMS = [
     icon: '❓',
     roles: ['superadmin', 'admin', 'editor'],
   },
+  {
+    key: 'como-trabajamos',
+    label: 'Cómo trabajamos',
+    icon: '🛠️',
+    roles: ['superadmin', 'admin', 'editor'],
+  },
 ];
 
 const ROLE_LABELS = {

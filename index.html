@@ -480,6 +480,87 @@
     font-size: 1.04rem;
   }
 
+  /* ===== COMO TRABAJAMOS ===== */
+  .ct-timeline {
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .ct-timeline::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--line);
+  }
+  .ct-step {
+    position: relative;
+    display: flex;
+    gap: 22px;
+    padding-bottom: 34px;
+  }
+  .ct-step:last-child { padding-bottom: 0; }
+  .ct-step-marker {
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow);
+  }
+  .ct-step-num {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--green-deep);
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ct-step-body {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 22px;
+    flex: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .ct-step-body:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow);
+  }
+  .ct-step-body h3 {
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+  }
+  .ct-step-body p {
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 0;
+  }
+  .ct-cta-wrap {
+    text-align: center;
+    margin-top: 44px;
+  }
+  @media (max-width: 640px) {
+    .ct-timeline::before { left: 21px; }
+    .ct-step { gap: 14px; }
+    .ct-step-marker { width: 44px; height: 44px; font-size: 1.1rem; }
+    .ct-step-body { padding: 14px 16px; }
+  }
+
   /* ===== FAQ ===== */
   .muted-note {
     color: var(--ink-soft);
@@ -1026,6 +1107,7 @@
       <li><a href="#nosotros">Nosotros</a></li>
       <li><a href="#sectores">Sectores</a></li>
       <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#como-trabajamos">Cómo Trabajamos</a></li>
       <li><a href="#faq">Preguntas Frecuentes</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
@@ -1347,6 +1429,22 @@
     <div class="servicios-panel" data-panel="contingencia">
       <div class="servicio-card"><span class="servicio-num">16</span><span class="txt">Plan Emergente</span></div>
       <div class="servicio-card"><span class="servicio-num">17</span><span class="txt">Plan de Acción</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="como-trabajamos">
+  <div class="container">
+    <div class="section-head reveal" id="ctSectionHead">
+      <span class="eyebrow">Cómo Trabajamos</span>
+      <h2>Cargando...</h2>
+      <p></p>
+    </div>
+    <div class="ct-timeline" id="ctTimeline">
+      <p class="muted-note">Cargando proceso...</p>
+    </div>
+    <div class="ct-cta-wrap">
+      <a href="#" id="ctCtaBtn" class="btn btn-primary" style="display:none;"></a>
     </div>
   </div>
 </section>
@@ -1748,7 +1846,7 @@
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
-  import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+  import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, where, orderBy, doc } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
 
   // Public Firebase config — these are identifiers, not secrets; security is
   // enforced by Firestore rules (see firestore.rules), not by hiding this object.
@@ -1899,6 +1997,62 @@
     (snap) => {
       faqItems = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       renderFaq();
+    }
+  );
+
+  // ---- Cómo Trabajamos (leído en vivo desde Firestore) ----
+  const ctSectionHead = document.getElementById('ctSectionHead');
+  const ctTimeline = document.getElementById('ctTimeline');
+  const ctCtaBtn = document.getElementById('ctCtaBtn');
+
+  onSnapshot(doc(db, 'workProcess', '_section'), (snap) => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+    ctSectionHead.querySelector('h2').textContent = data.title || 'Cómo Trabajamos';
+    ctSectionHead.querySelector('p').textContent = data.intro || '';
+
+    if (data.buttonText) {
+      ctCtaBtn.textContent = data.buttonText;
+      ctCtaBtn.style.display = 'inline-block';
+      if (data.buttonType === 'whatsapp') {
+        ctCtaBtn.href = 'https://wa.me/593982425506?text=' + encodeURIComponent(data.buttonMessage || 'Hola, deseo más información sobre sus servicios ambientales');
+        ctCtaBtn.target = '_blank';
+        ctCtaBtn.rel = 'noopener';
+      } else {
+        ctCtaBtn.href = '#contacto';
+        ctCtaBtn.removeAttribute('target');
+      }
+    } else {
+      ctCtaBtn.style.display = 'none';
+    }
+  });
+
+  onSnapshot(
+    query(collection(db, 'workProcess'), where('active', '==', true), orderBy('order', 'asc')),
+    (snap) => {
+      const steps = snap.docs.filter((d) => d.id !== '_section').map((d) => ({ id: d.id, ...d.data() }));
+      if (steps.length === 0) {
+        ctTimeline.innerHTML = '<p class="muted-note">Todavía no hay pasos publicados.</p>';
+        return;
+      }
+      ctTimeline.innerHTML = steps
+        .map(
+          (s, idx) => `
+          <div class="ct-step">
+            <div class="ct-step-marker">
+              ${escapeHtml(s.icon || '•')}
+              <span class="ct-step-num">${idx + 1}</span>
+            </div>
+            <div class="ct-step-body">
+              <h3>${escapeHtml(s.title)}</h3>
+              <p>${escapeHtml(s.description)}</p>
+            </div>
+          </div>`
+        )
+        .join('');
+    },
+    () => {
+      ctTimeline.innerHTML = '<p class="muted-note">No se pudo cargar el proceso.</p>';
     }
   );
 </script>
